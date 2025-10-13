@@ -472,13 +472,114 @@ export default function BookTable({ refreshFlag }) {
                 />
               </td>
               <td>{b.ean}</td>
-              <td>{formatDateDisplay(b.date_entree)}</td>
-              <td>{b.titre}</td>
-              <td>{b.auteur}</td>
-              <td>{b.cote}</td>
-              <td>{b.genre}</td>
-              <td>
-                <span style={getStatusStyle(b.statut)}>{b.statut}</span>
+              <td
+                onDoubleClick={() =>
+                  startEditing(b.ean, "date_entree", b.date_entree)
+                }
+                style={{ cursor: "pointer" }}
+              >
+                {editing.ean === b.ean && editing.field === "date_entree" ? (
+                  <input
+                    value={tempValue}
+                    onChange={(e) => setTempValue(e.target.value)}
+                    onBlur={() => stopEditing(b)}
+                    onKeyDown={(e) => handleKeyDown(e, b)}
+                    autoFocus
+                    placeholder="JJ/MM/AAAA"
+                  />
+                ) : (
+                  formatDateDisplay(b.date_entree)
+                )}
+              </td>
+              <td
+                onDoubleClick={() => startEditing(b.ean, "titre", b.titre)}
+                style={{ cursor: "pointer" }}
+              >
+                {editing.ean === b.ean && editing.field === "titre" ? (
+                  <input
+                    value={tempValue}
+                    onChange={(e) => setTempValue(e.target.value)}
+                    onBlur={() => stopEditing(b)}
+                    onKeyDown={(e) => handleKeyDown(e, b)}
+                    autoFocus
+                  />
+                ) : (
+                  b.titre
+                )}
+              </td>
+              <td
+                onDoubleClick={() => startEditing(b.ean, "auteur", b.auteur)}
+                style={{ cursor: "pointer" }}
+              >
+                {editing.ean === b.ean && editing.field === "auteur" ? (
+                  <input
+                    value={tempValue}
+                    onChange={(e) => setTempValue(e.target.value)}
+                    onBlur={() => stopEditing(b)}
+                    onKeyDown={(e) => handleKeyDown(e, b)}
+                    autoFocus
+                  />
+                ) : (
+                  b.auteur
+                )}
+              </td>
+              <td
+                onDoubleClick={() => startEditing(b.ean, "cote", b.cote)}
+                style={{ cursor: "pointer" }}
+              >
+                {editing.ean === b.ean && editing.field === "cote" ? (
+                  <input
+                    value={tempValue}
+                    onChange={(e) => setTempValue(e.target.value)}
+                    onBlur={() => stopEditing(b)}
+                    onKeyDown={(e) => handleKeyDown(e, b)}
+                    autoFocus
+                  />
+                ) : (
+                  b.cote
+                )}
+              </td>
+              <td
+                onDoubleClick={() => startEditing(b.ean, "genre", b.genre)}
+                style={{ cursor: "pointer" }}
+              >
+                {editing.ean === b.ean && editing.field === "genre" ? (
+                  <select
+                    value={tempValue}
+                    onChange={(e) => setTempValue(e.target.value)}
+                    onBlur={() => stopEditing(b)}
+                    onKeyDown={(e) => handleKeyDown(e, b)}
+                    autoFocus
+                  >
+                    <option value="">(Non défini)</option>
+                    {genres.map((g) => (
+                      <option key={g}>{g}</option>
+                    ))}
+                  </select>
+                ) : (
+                  b.genre
+                )}
+              </td>
+              <td
+                onDoubleClick={() => startEditing(b.ean, "statut", b.statut)}
+                style={{ cursor: "pointer" }}
+              >
+                {editing.ean === b.ean && editing.field === "statut" ? (
+                  <select
+                    value={tempValue}
+                    onChange={(e) => setTempValue(e.target.value)}
+                    onBlur={() => stopEditing(b)}
+                    onKeyDown={(e) => handleKeyDown(e, b)}
+                    autoFocus
+                    style={{ width: "100%" }}
+                  >
+                    {statuts.map((s) => (
+                      <option key={s}>{s}</option>
+                    ))}
+                  </select>
+                ) : (
+                  <span style={getStatusStyle(b.statut)}>{b.statut}</span>
+                )}
               </td>
               <td>
                 <button

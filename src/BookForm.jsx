@@ -66,7 +66,7 @@ export default function BookForm({ onBookAdded }) {
         </button>
       </div>
 
-      <p style={{ marginTop: 10 }}>ou importer un fichier CSV :</p>
+      <p style={{ marginTop: 10 }}>Ou importer un fichier CSV :</p>
       <input type="file" accept=".csv" onChange={handleFile} />
     </div>
   );
