@@ -1,0 +1,133 @@
+/* App.css : styles globaux */
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f9fafb;
+  color: #111827;
+  margin: 0;
+  padding: 0;
+}
+
+.card {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+h1,
+h2 {
+  margin: 0;
+  font-weight: 600;
+}
+
+h2 {
+  font-size: 1.25rem;
+  margin-bottom: 12px;
+}
+
+button {
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  opacity: 0.85;
+}
+
+input,
+select {
+  padding: 6px 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+/* Tableau */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+th,
+td {
+  border: 1px solid #e5e7eb;
+
+  padding: 10px;
+  text-align: left;
+}
+
+th {
+  background-color: #f3f4f6;
+  font-weight: 600;
+}
+
+tr:hover {
+  background-color: #efefef;
+}
+
+/* Statuts colorés */
+.status-a-cataloguer {
+  background-color: #ef4444; /* rouge */
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  font-size: 0.9rem;
+}
+
+.status-en-cours {
+  background-color: #f59e0b; /* orange */
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  font-size: 0.9rem;
+}
+
+.status-catalogue {
+  background-color: #10b981; /* vert */
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  font-size: 0.9rem;
+}
+
+/* Boutons principaux */
+.button-primary {
+  background-color: #2563eb;
+  color: white;
+  padding: 6px 12px;
+}
+
+.button-primary:hover {
+  background-color: #1d4ed8;
+}
+
+.button-delete {
+  background-color: #ef4444;
+  color: white;
+  padding: 4px 8px;
+}
+
+.button-delete:hover {
+  background-color: #dc2626;
+}
+
+/* Conteneur général */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
