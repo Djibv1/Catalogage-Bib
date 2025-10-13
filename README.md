@@ -1,14 +1,14 @@
  <h2 align="center">Projet de suivi de catalogage</h2>
  <p align="center">Pour gérer mes collections et savoir à quel point je suis sous l'eau...</p>
 <p align="center">
-<a href="https://djibv1.github.io/bubbleShooter/">Si vous voulez l'essayer !</a></p>
+<a href="https://djibv1.github.io/Catalogage-Bib/">Si vous voulez l'essayer !</a></p>
 
 <p align="center">N'hésitez pas à donner un coup de pouce en proposant des améliorations !
 
 <h4 align="center">Les choses à améliorer </h4>
 
 <p align="center">
-<h5>Styles :</h5>
+<h5 align="center">Styles :</h5>
 <p align="center">
 - Un tableau un peu + beau...?<br>
 - Le responsive...<br>
@@ -17,7 +17,7 @@
 </p>
 </p>
 <p align="center">
-<h5>Fonctionnement :</h5>
+<h5 align="center">Fonctionnement :</h5>
 <p align="center">
 - Redimensionner les cellules comme sur excel<br>
 
