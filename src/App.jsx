@@ -11,7 +11,7 @@ export default function App() {
   }
 
   return (
-    <div style={{ padding: 20, maxWidth: "80%", margin: "auto" }}>
+    <div style={{ padding: 20, maxWidth: "90%", margin: "auto" }}>
       <h1 style={{ alignItems: "auto" }}> Suivi des livres à cataloguer</h1>
       <BookForm onBookAdded={handleBookAdded} />
       <BookTable refreshFlag={refreshFlag} />
