@@ -98,6 +98,17 @@ export default function BookTable({ refreshFlag }) {
     else setSelectedBooks([]);
   }
 
+  function toggleSelectAllCatalogues(selectAll) {
+    if (selectAll) setSelectedBooks(catalogues.map((b) => b.ean));
+    else setSelectedBooks([]);
+  }
+
+  function toggleSelectCatalogue(ean) {
+    setSelectedBooks((prev) =>
+      prev.includes(ean) ? prev.filter((x) => x !== ean) : [...prev, ean]
+    );
+  }
+
   async function applyBulkUpdate(field, value) {
     for (const ean of selectedBooks) {
       await updateBook(ean, {
@@ -429,6 +440,16 @@ export default function BookTable({ refreshFlag }) {
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead style={{ background: "#d1fae5" }}>
           <tr>
+            <th>
+              <input
+                type="checkbox"
+                checked={
+                  selectedBooks.length === catalogues.length &&
+                  catalogues.length > 0
+                }
+                onChange={(e) => toggleSelectAllCatalogues(e.target.checked)}
+              />
+            </th>
             <th>EAN</th>
             <th>Date d’entrée</th>
             <th>Titre</th>
@@ -439,9 +460,17 @@ export default function BookTable({ refreshFlag }) {
             <th></th>
           </tr>
         </thead>
+
         <tbody>
           {catalogues.map((b) => (
             <tr key={b.ean} style={{ borderBottom: "1px solid #ddd" }}>
+              <td>
+                <input
+                  type="checkbox"
+                  checked={selectedBooks.includes(b.ean)}
+                  onChange={() => toggleSelectCatalogue(b.ean)}
+                />
+              </td>
               <td>{b.ean}</td>
               <td>{formatDateDisplay(b.date_entree)}</td>
               <td>{b.titre}</td>
