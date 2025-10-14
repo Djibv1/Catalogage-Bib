@@ -8,6 +8,10 @@ export default function BookTable({ refreshFlag }) {
   const [editing, setEditing] = useState({ ean: null, field: null });
   const [tempValue, setTempValue] = useState("");
   const [selectedBooks, setSelectedBooks] = useState([]);
+  // --- GESTION DES GENRES PERSONNALISÉS ---
+  const [activeGenres, setActiveGenres] = useState([]); // Genres sélectionnés par l'utilisateur
+  const [showGenreSelector, setShowGenreSelector] = useState(false);
+
   const [filters, setFilters] = useState({
     genre: "",
     statut: "",
@@ -15,15 +19,61 @@ export default function BookTable({ refreshFlag }) {
   });
 
   const genres = [
-    "Mangas",
+    ///
+    "Mangas enfants",
+    "Mangas ados",
     "Albums",
     "ATP/BEBE",
     "TI",
     "Conte",
     "Livres sonores",
     "Livres CD",
+    ///
+    "BD enfants",
+    "BD ados",
+    "Romans ados",
+    "Romans enfants",
+    "Romans enfants VO",
+    ///
+    "BD adultes",
+    "Mangas adultes",
+    "Comics",
+
+    ///
+    "Romans adultes",
+    "Romans adultes VO",
+    "Polars",
+
+    ///
+    "Docs PL",
+    "Docs Enfants",
+    "Romans PL",
+
+    ///
+    "Guides de voyage",
+    "Revues",
+
+    //
+    "Docs Adultes",
+    "DVD",
+    "CD",
+    "Jeux-vidéos",
   ];
   const statuts = ["À cataloguer", "En cours", "Catalogué"];
+
+  // --- SAUVEGARDE DES GENRES PERSONNALISÉS DANS LE NAVIGATEUR ---
+  useEffect(() => {
+    const saved = localStorage.getItem("activeGenres");
+    if (saved) setActiveGenres(JSON.parse(saved));
+  }, []);
+
+  function toggleGenre(g) {
+    let updated;
+    if (activeGenres.includes(g)) updated = activeGenres.filter((x) => x !== g);
+    else updated = [...activeGenres, g];
+    setActiveGenres(updated);
+    localStorage.setItem("activeGenres", JSON.stringify(updated));
+  }
 
   useEffect(() => {
     load();
@@ -154,13 +204,67 @@ export default function BookTable({ refreshFlag }) {
     filteredBooks = filteredBooks.filter((b) => b.genre === filters.genre);
   if (filters.statut)
     filteredBooks = filteredBooks.filter((b) => b.statut === filters.statut);
-  if (filters.sortCote)
-    filteredBooks = filteredBooks.sort((a, b) => a.cote.localeCompare(b.cote));
+  if (filters.sortCote === "asc")
+    filteredBooks = [...filteredBooks].sort((a, b) =>
+      a.cote.localeCompare(b.cote)
+    );
+  else if (filters.sortCote === "desc")
+    filteredBooks = [...filteredBooks].sort((a, b) =>
+      b.cote.localeCompare(a.cote)
+    );
 
   const catalogues = books.filter((b) => b.statut === "Catalogué");
 
   return (
     <div className="card" style={{ marginTop: 16 }}>
+      {/* --- PERSONNALISATION DES GENRES --- */}
+      <div style={{ marginBottom: 12 }}>
+        <button
+          onClick={() => setShowGenreSelector(!showGenreSelector)}
+          style={{
+            padding: "6px 12px",
+            background: "#2563eb",
+            color: "white",
+            borderRadius: 6,
+            border: "none",
+            cursor: "pointer",
+          }}
+        >
+          {showGenreSelector
+            ? "Fermer la sélection des genres"
+            : "Choisir mes genres"}
+        </button>
+      </div>
+
+      {showGenreSelector && (
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
+            gap: 8,
+            background: "#f9fafb",
+            padding: 12,
+            borderRadius: 8,
+            border: "1px solid #e5e7eb",
+            marginBottom: 16,
+          }}
+        >
+          {genres.map((g) => (
+            <label
+              key={g}
+              style={{ display: "flex", alignItems: "center", gap: 6 }}
+            >
+              <input
+                type="checkbox"
+                checked={activeGenres.includes(g)}
+                onChange={() => toggleGenre(g)}
+              />
+              {g}
+            </label>
+          ))}
+        </div>
+      )}
+
       <h2>À cataloguer / En cours ({filteredBooks.length})</h2>
 
       {/* FILTRES */}
@@ -172,7 +276,7 @@ export default function BookTable({ refreshFlag }) {
           onChange={(e) => setFilters({ ...filters, genre: e.target.value })}
         >
           <option value="">Filtrer par genre...</option>
-          {genres.map((g) => (
+          {(activeGenres.length > 0 ? activeGenres : genres).map((g) => (
             <option key={g}>{g}</option>
           ))}
         </select>
@@ -216,12 +320,13 @@ export default function BookTable({ refreshFlag }) {
 
           <select onChange={(e) => applyBulkUpdate("genre", e.target.value)}>
             <option value="">Ajouter un genre...</option>
-            {genres.map((g) => (
+            {(activeGenres.length > 0 ? activeGenres : genres).map((g) => (
               <option key={g}>{g}</option>
             ))}
           </select>
 
           <input
+            style={{ width: "100%", boxSizing: "border-box", minWidth: 0 }}
             placeholder="Ajouter une cote..."
             onKeyDown={async (e) => {
               if (e.key === "Enter") {
@@ -231,6 +336,7 @@ export default function BookTable({ refreshFlag }) {
             }}
           />
           <input
+            style={{ width: "100%", boxSizing: "border-box", minWidth: 0 }}
             placeholder="Modifier auteur..."
             onKeyDown={async (e) => {
               if (e.key === "Enter") {
@@ -240,6 +346,7 @@ export default function BookTable({ refreshFlag }) {
             }}
           />
           <input
+            style={{ width: "100%", boxSizing: "border-box", minWidth: 0 }}
             placeholder="Modifier titre..."
             onKeyDown={async (e) => {
               if (e.key === "Enter") {
@@ -249,6 +356,7 @@ export default function BookTable({ refreshFlag }) {
             }}
           />
           <input
+            style={{ width: "100%", boxSizing: "border-box", minWidth: 0 }}
             placeholder="Date JJ/MM/AAAA..."
             onKeyDown={async (e) => {
               if (e.key === "Enter") {
@@ -279,11 +387,29 @@ export default function BookTable({ refreshFlag }) {
       )}
 
       {/* Tableau à traiter */}
-      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+      <table
+        style={{
+          width: "100%",
+          borderCollapse: "collapse",
+          tableLayout: "fixed",
+        }}
+      >
+        <colgroup>
+          <col style={{ width: "40px" }} /> {/* sélection */}
+          <col style={{ width: "140px" }} /> {/* EAN */}
+          <col style={{ width: "120px" }} /> {/* Date */}
+          <col style={{ width: "auto" }} /> {/* Titre (large) */}
+          <col style={{ width: "160px" }} /> {/* Auteur */}
+          <col style={{ width: "100px" }} /> {/* Cote */}
+          <col style={{ width: "140px" }} /> {/* Genre */}
+          <col style={{ width: "140px" }} /> {/* Statut */}
+          <col style={{ width: "60px" }} /> {/* poubelle */}
+        </colgroup>
         <thead style={{ background: "#f3f4f6" }}>
           <tr>
             <th>
               <input
+                style={{ width: "100%", boxSizing: "border-box", minWidth: 0 }}
                 type="checkbox"
                 checked={
                   selectedBooks.length === filteredBooks.length &&
@@ -307,6 +433,11 @@ export default function BookTable({ refreshFlag }) {
             <tr key={b.ean} style={{ borderBottom: "1px solid #ddd" }}>
               <td>
                 <input
+                  style={{
+                    width: "100%",
+                    boxSizing: "border-box",
+                    minWidth: 0,
+                  }}
                   type="checkbox"
                   checked={selectedBooks.includes(b.ean)}
                   onChange={() => toggleSelect(b.ean)}
@@ -321,6 +452,11 @@ export default function BookTable({ refreshFlag }) {
               >
                 {editing.ean === b.ean && editing.field === "date_entree" ? (
                   <input
+                    style={{
+                      width: "100%",
+                      boxSizing: "border-box",
+                      minWidth: 0,
+                    }}
                     value={tempValue}
                     onChange={(e) => setTempValue(e.target.value)}
                     onBlur={() => stopEditing(b)}
@@ -338,6 +474,11 @@ export default function BookTable({ refreshFlag }) {
               >
                 {editing.ean === b.ean && editing.field === "titre" ? (
                   <input
+                    style={{
+                      width: "100%",
+                      boxSizing: "border-box",
+                      minWidth: 0,
+                    }}
                     value={tempValue}
                     onChange={(e) => setTempValue(e.target.value)}
                     onBlur={() => stopEditing(b)}
@@ -354,6 +495,11 @@ export default function BookTable({ refreshFlag }) {
               >
                 {editing.ean === b.ean && editing.field === "auteur" ? (
                   <input
+                    style={{
+                      width: "100%",
+                      boxSizing: "border-box",
+                      minWidth: 0,
+                    }}
                     value={tempValue}
                     onChange={(e) => setTempValue(e.target.value)}
                     onBlur={() => stopEditing(b)}
@@ -370,6 +516,11 @@ export default function BookTable({ refreshFlag }) {
               >
                 {editing.ean === b.ean && editing.field === "cote" ? (
                   <input
+                    style={{
+                      width: "100%",
+                      boxSizing: "border-box",
+                      minWidth: 0,
+                    }}
                     value={tempValue}
                     onChange={(e) => setTempValue(e.target.value)}
                     onBlur={() => stopEditing(b)}
@@ -393,9 +544,11 @@ export default function BookTable({ refreshFlag }) {
                     autoFocus
                   >
                     <option value="">(Non défini)</option>
-                    {genres.map((g) => (
-                      <option key={g}>{g}</option>
-                    ))}
+                    {(activeGenres.length > 0 ? activeGenres : genres).map(
+                      (g) => (
+                        <option key={g}>{g}</option>
+                      )
+                    )}
                   </select>
                 ) : (
                   b.genre
@@ -437,11 +590,29 @@ export default function BookTable({ refreshFlag }) {
 
       {/* Tableau catalogués */}
       <h2 style={{ marginTop: 40 }}>Catalogués ({catalogues.length})</h2>
-      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+      <table
+        style={{
+          width: "100%",
+          borderCollapse: "collapse",
+          tableLayout: "fixed",
+        }}
+      >
+        <colgroup>
+          <col style={{ width: "40px" }} /> {/* sélection */}
+          <col style={{ width: "140px" }} /> {/* EAN */}
+          <col style={{ width: "120px" }} /> {/* Date */}
+          <col style={{ width: "auto" }} /> {/* Titre (large) */}
+          <col style={{ width: "160px" }} /> {/* Auteur */}
+          <col style={{ width: "100px" }} /> {/* Cote */}
+          <col style={{ width: "140px" }} /> {/* Genre */}
+          <col style={{ width: "140px" }} /> {/* Statut */}
+          <col style={{ width: "60px" }} /> {/* poubelle */}
+        </colgroup>
         <thead style={{ background: "#d1fae5" }}>
           <tr>
             <th>
               <input
+                style={{ width: "100%", boxSizing: "border-box", minWidth: 0 }}
                 type="checkbox"
                 checked={
                   selectedBooks.length === catalogues.length &&
@@ -466,6 +637,11 @@ export default function BookTable({ refreshFlag }) {
             <tr key={b.ean} style={{ borderBottom: "1px solid #ddd" }}>
               <td>
                 <input
+                  style={{
+                    width: "100%",
+                    boxSizing: "border-box",
+                    minWidth: 0,
+                  }}
                   type="checkbox"
                   checked={selectedBooks.includes(b.ean)}
                   onChange={() => toggleSelectCatalogue(b.ean)}
@@ -480,6 +656,11 @@ export default function BookTable({ refreshFlag }) {
               >
                 {editing.ean === b.ean && editing.field === "date_entree" ? (
                   <input
+                    style={{
+                      width: "100%",
+                      boxSizing: "border-box",
+                      minWidth: 0,
+                    }}
                     value={tempValue}
                     onChange={(e) => setTempValue(e.target.value)}
                     onBlur={() => stopEditing(b)}
@@ -497,6 +678,11 @@ export default function BookTable({ refreshFlag }) {
               >
                 {editing.ean === b.ean && editing.field === "titre" ? (
                   <input
+                    style={{
+                      width: "100%",
+                      boxSizing: "border-box",
+                      minWidth: 0,
+                    }}
                     value={tempValue}
                     onChange={(e) => setTempValue(e.target.value)}
                     onBlur={() => stopEditing(b)}
@@ -513,6 +699,11 @@ export default function BookTable({ refreshFlag }) {
               >
                 {editing.ean === b.ean && editing.field === "auteur" ? (
                   <input
+                    style={{
+                      width: "100%",
+                      boxSizing: "border-box",
+                      minWidth: 0,
+                    }}
                     value={tempValue}
                     onChange={(e) => setTempValue(e.target.value)}
                     onBlur={() => stopEditing(b)}
@@ -529,6 +720,11 @@ export default function BookTable({ refreshFlag }) {
               >
                 {editing.ean === b.ean && editing.field === "cote" ? (
                   <input
+                    style={{
+                      width: "100%",
+                      boxSizing: "border-box",
+                      minWidth: 0,
+                    }}
                     value={tempValue}
                     onChange={(e) => setTempValue(e.target.value)}
                     onBlur={() => stopEditing(b)}
@@ -552,9 +748,11 @@ export default function BookTable({ refreshFlag }) {
                     autoFocus
                   >
                     <option value="">(Non défini)</option>
-                    {genres.map((g) => (
-                      <option key={g}>{g}</option>
-                    ))}
+                    {(activeGenres.length > 0 ? activeGenres : genres).map(
+                      (g) => (
+                        <option key={g}>{g}</option>
+                      )
+                    )}
                   </select>
                 ) : (
                   b.genre
