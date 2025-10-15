@@ -1,4 +1,3 @@
-// src/BookTable.jsx
 import { useEffect, useState } from "react";
 import { getBooks, updateBook, deleteBook } from "./db";
 import Papa from "papaparse";
@@ -73,6 +72,12 @@ export default function BookTable({ refreshFlag }) {
     else updated = [...activeGenres, g];
     setActiveGenres(updated);
     localStorage.setItem("activeGenres", JSON.stringify(updated));
+  }
+
+  function resetGenres() {
+    const defaultGenres = [];
+    setActiveGenres(defaultGenres);
+    localStorage.setItem("activeGenres", JSON.stringify(defaultGenres));
   }
 
   useEffect(() => {
@@ -218,7 +223,7 @@ export default function BookTable({ refreshFlag }) {
   return (
     <div className="card" style={{ marginTop: 16 }}>
       {/* --- PERSONNALISATION DES GENRES --- */}
-      <div style={{ marginBottom: 12 }}>
+      <div style={{ marginBottom: 12, display: "flex", gap: "8px" }}>
         <button
           onClick={() => setShowGenreSelector(!showGenreSelector)}
           style={{
@@ -233,6 +238,20 @@ export default function BookTable({ refreshFlag }) {
           {showGenreSelector
             ? "Fermer la sélection des genres"
             : "Choisir mes genres"}
+        </button>
+
+        <button
+          onClick={resetGenres}
+          style={{
+            padding: "6px 12px",
+            background: "#6b7280",
+            color: "white",
+            borderRadius: 6,
+            border: "none",
+            cursor: "pointer",
+          }}
+        >
+          Réinitialiser les genres
         </button>
       </div>
 
