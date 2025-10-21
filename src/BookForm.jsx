@@ -7,10 +7,16 @@ import Papa from "papaparse";
 export default function BookForm({ onBookAdded }) {
   const [ean, setEan] = useState("");
   const [loading, setLoading] = useState(false);
+  let addTimeout = null;
 
-  // ➕ Ajout d'un livre à partir de l'EAN
+  // ➕ Ajout d’un livre à partir de l’EAN
   async function handleAdd() {
     if (!ean.trim()) return;
+    if (!/^\d{13}$/.test(ean.trim())) {
+      console.log("EAN invalide : il doit contenir exactement 13 chiffres.");
+      return;
+    }
+
     setLoading(true);
     const data = await getBookDataFromEAN(ean.trim());
     if (data) {
@@ -51,14 +57,33 @@ export default function BookForm({ onBookAdded }) {
 
   return (
     <div className="card">
-      <h2> Ajouter un livre</h2>
+      <h2>Ajouter un livre</h2>
 
       <div style={{ display: "flex", gap: 8 }}>
         <input
           type="text"
           value={ean}
-          placeholder="EAN du livre"
-          onChange={(e) => setEan(e.target.value)}
+          placeholder="EAN du livre (13 chiffres)"
+          onChange={(e) => {
+            const val = e.target.value.trim();
+
+            // ⚠️ Empêche de dépasser 13 chiffres
+            if (val.length > 13) return;
+
+            setEan(val);
+
+            // ✅ Si l’EAN est complet, ajout automatique
+            if (/^\d{13}$/.test(val)) {
+              if (addTimeout) clearTimeout(addTimeout);
+              addTimeout = setTimeout(() => handleAdd(), 200);
+            }
+          }}
+          onKeyDown={(e) => {
+            // ✅ Appui sur Entrée => ajout direct
+            if (e.key === "Enter") {
+              handleAdd();
+            }
+          }}
           style={{ flex: 1 }}
         />
         <button onClick={handleAdd} disabled={loading}>

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { getBooks, updateBook, deleteBook } from "./db";
-import Papa from "papaparse";
 
 export default function BookTable({ refreshFlag }) {
   const [books, setBooks] = useState([]);
